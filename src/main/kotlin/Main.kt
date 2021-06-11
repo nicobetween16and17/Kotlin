@@ -77,7 +77,7 @@ fun isOver(list: ArrayList<Int>, generated: ArrayList<Int>):Boolean{
     return isOver
 }
 fun isFormatCorrect(charSequence: CharSequence):Boolean{
-    val regex="[0-9] [0-9] [0-9] [0-9]".toRegex()
+    val regex="^[0-9] [0-9] [0-9] [0-9]$".toRegex()
 
     return regex.containsMatchIn(charSequence)
 }
