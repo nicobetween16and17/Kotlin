@@ -1,4 +1,4 @@
-fun main(args: Array<String>) {
+fun main() {
     println("Début du jeu!")
     var generatedList:List<Int>
     var list=ArrayList<Int>()
@@ -16,6 +16,7 @@ fun main(args: Array<String>) {
 
 
 }
+
 fun askCombi():ArrayList<Int>{
     var combiList:List<String>
     var arrayCombi=ArrayList<Int>()
@@ -36,35 +37,50 @@ fun askCombi():ArrayList<Int>{
 fun resultCombi(list:ArrayList<Int>, generated:ArrayList<Int>):String{
     var wellPlaceds = 0
     var wrongplaceds= 0
-    var isInsideGenerated: Boolean
+    var wellplacedList=ArrayList<Int>()
+    var wrongplacedList=ArrayList<Int>()
     for (i in 0..list.size-1){
-        isInsideGenerated=false
-        for (j in 0..generated.size-1){
-            if(list[i] == generated[j]){
-                isInsideGenerated = true
+        if(generated.contains(list[i])&&!isAlreadyUsed(wellplacedList,list[i])){
+            if(generated[i]==list[i]){
+                wellplacedList.add(list[i])
+                wellPlaceds++
+            }else{
+                wrongplacedList.add(list[i])
+                wrongplaceds++
             }
-            if(isInsideGenerated){
-                if(i==j){
-                    wellPlaceds++
-                }else{
-                    wrongplaceds++
-                }
-                break;
-            }
-            j.inc()
         }
         i.inc()
     }
+    if(hasDoublon(wrongplacedList)&&wrongplacedList.size>1){
+        val wrongrepet=nbRepet(wrongplacedList,finddoublon(wrongplacedList))
+        if(wellplacedList.contains(finddoublon(wrongplacedList))){
+            wrongplacedList-=wrongrepet
+        }
+    }
+
+
     return " Il y a $wellPlaceds éléments bien placés et $wrongplaceds éléments mal placés"
 }
-fun generateList(): ArrayList<Int>{
-    var randoms= ArrayList<Int>()
+fun isAlreadyUsed(wellplacedList: ArrayList<Int>, position:Int):Boolean{
+    if (!wellplacedList.isEmpty()){
+        return wellplacedList.contains(position)
+    }else return false
 
-    for (i in 0..3){
-        randoms.add((0..6).random())
+}
+fun hasDoublon(list: ArrayList<Int>):Boolean{
+    var currentnb:Int=0
+    for (i in 0..list.size-1){
+        var listcopied = list
+        currentnb=list[i]
+        listcopied.remove(list[i])
+        if(listcopied.contains(currentnb)){
+            return true
+        }
+
         i.inc()
+        println(i)
     }
-    return randoms
+    return false
 }
 fun isOver(list: ArrayList<Int>, generated: ArrayList<Int>):Boolean{
     var isOver:Boolean=true
@@ -76,8 +92,41 @@ fun isOver(list: ArrayList<Int>, generated: ArrayList<Int>):Boolean{
     }
     return isOver
 }
+fun finddoublon(list: ArrayList<Int>):Int {
+    var currentnb:Int=0
+    if(hasDoublon(list)){
+        for (i in 0..list.size-1){
+            var listcopied = list
+            currentnb=list[i]
+            listcopied.remove(list[i])
+            if(listcopied.contains(currentnb)){
+                return currentnb
+            }
+        }
+    }
+    return 0
+}
+fun nbRepet(list: ArrayList<Int>, number:Int):Int{
+    var listcopied = list
+    if (listcopied.contains(number) && listcopied.isNotEmpty()){
+        listcopied.remove(number)
+        nbRepet(listcopied, number)
+    }
+    return (4-list.size)
+}
+fun generateList(): ArrayList<Int>{
+    var randoms= ArrayList<Int>()
+
+    for (i in 0..3){
+        randoms.add((0..6).random())
+        i.inc()
+    }
+    return randoms
+}
 fun isFormatCorrect(charSequence: CharSequence):Boolean{
     val regex="^[0-9] [0-9] [0-9] [0-9]$".toRegex()
-
     return regex.containsMatchIn(charSequence)
 }
+
+
+
